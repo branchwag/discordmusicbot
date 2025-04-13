@@ -1,0 +1,29 @@
+# Node modules
+node_modules/
+
+# Configuration files with sensitive data
+config.json
+
+# Temp directory for downloaded files
+temp/
+
+# Log files
+*.log
+
+# Misc
+discordinfo.txt
+
+# Old or backup files
+old/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# npm debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Local environment variables
+.env
