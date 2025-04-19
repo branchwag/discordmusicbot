@@ -10,12 +10,14 @@ const fs = require('fs');
 const path = require('path');
 const { token } = require('./config.json');
 
+//https://discord.js.org/docs/packages/discord.js/main/Client:class
+//tells Discord what type of events bot wants to receive
 const client = new Client({
   intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.MessageContent
+    GatewayIntentBits.Guilds, //allows bot to get info about servers it's in
+    GatewayIntentBits.GuildMessages, // allows bot access to messages (detecting when someone uses command)
+    GatewayIntentBits.GuildVoiceStates, //voice channel info
+    GatewayIntentBits.MessageContent //see message content
   ]
 });
 
@@ -47,8 +49,29 @@ client.on('messageCreate', async message => {
     serverQueue.connection.destroy();
     queue.delete(message.guild.id);
     return message.channel.send('Stopped and left the channel!');
+  } else if (message.content.startsWith('!skip')) {
+      skipSong(message, serverQueue);
   }
 });
+
+function skipSong(message, serverQueue) {
+  if (!message.member.voice.channel) {
+    return message.channel.send('You need to be in a voice channel to skip songs!');
+  }
+
+  if (!serverQueue) {
+    return message.channel.send('There is no song to skip!');
+  }
+
+  if (serverQueue.songs.length <= 1) {
+    return message.channel.send('There are no more songs in the queue to skip to!');
+  }
+
+  message.channel.send(`⏭️ Skipped: **${serverQueue.songs[0].title}**`);
+
+  // The player's 'idle' event will automatically play the next song
+  serverQueue.player.stop();
+}
 
 async function executePlay(message, serverQueue) {
   const args = message.content.split(' ');
