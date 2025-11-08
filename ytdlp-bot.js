@@ -168,7 +168,13 @@ async function executePlay(message, serverQueue) {
     } else {
       // Add to existing queue
       serverQueue.songs.push(song);
-      return message.channel.send(`🎵 Added to queue: ${song.title}`);
+      message.channel.send(`🎵 Added to queue: ${song.title}`);
+
+      //if player is idle (not currently playing), start playing
+      if (serverQueue.player.state.status === AudioPlayerStatus.Idle) {
+		playSong(message.guild.id);
+	}
+	return
     }
   } catch (error) {
     console.error(`Error in executePlay: ${error.message}`);
@@ -178,12 +184,13 @@ async function executePlay(message, serverQueue) {
 
 async function playSong(guildId, statusMsg = null) {
   const serverQueue = queue.get(guildId);
-  if (!serverQueue || serverQueue.songs.length === 0) {
-    if (serverQueue?.connection) {
-      serverQueue.connection.destroy();
-    }
-    queue.delete(guildId);
+  if (!serverQueue) {
     return;
+  }
+  if (serverQueue.songs.length === 0) {
+		//send a msg that queue is empty but don't leave
+	serverQueue.textChannel.send('Queue finished! Add more songs with !play');
+	return;
   }
   
   try {

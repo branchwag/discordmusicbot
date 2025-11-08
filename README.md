@@ -3,11 +3,10 @@
 A simple Discord music bot that plays YouTube videos in voice channels.
 
 ## Features
-
 - Play music from YouTube URLs or search terms
 - Simple commands for easy use
 - Downloads songs before playing for reliable audio quality
-- Works with modern Discord API
+- Works with Discord API
 
 ## Prerequisites
 
